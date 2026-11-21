@@ -16,7 +16,7 @@ const PRESETS=[
 {id:'lead',title:'Leadsheet',description:'Single melody staff and chord symbols',parts:['Lead Sheet']},
 {id:'other',title:'Other',description:'Start with a blank instrument list',parts:[]}
 ];
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','&#39;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' ,"'":'&#39;'}[c]));
 let open=false,custom=false,selection=[],selectedPreset='';
 const cleanParts=parts=>[...new Set(parts.filter(x=>typeof x==='string'&&x.trim()))];
 export function renderNewtMenu(root,handlers){
