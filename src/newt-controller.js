@@ -5,7 +5,7 @@ export function mountNewtController(host,draft,save){
  const section=draft.sections?.[0];if(!section)return;
  draft.controllerNotes ||= {};
  let part=draft.parts?.[0]||'Trumpet',cursor=0,selected=0,view='hybrid',duration=1,playing=false,audio=null;
- const notes=()=>draft.controllerNotes[part]||[];
+ const notes=()=>draft.controllerNotes[part] ||= [];
  const persist=()=>{draft.controllerNotes[part]=notes();save()};
  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const root=document.createElement('section');root.className='newt-game';host.prepend(root);
