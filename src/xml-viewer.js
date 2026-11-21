@@ -24,7 +24,7 @@ export function mountXmlViewer(root,getXml){
   if(!open)return;
   const version=++revision;
   let xml;
-  try{xml=getXml()}catch(e){status.textContent='Unable to generate MusicXML: '+e.message;return}
+  try{if(typeof getXml!=='function')throw new Error('MusicXML generator is not connected');xml=getXml();if(typeof xml!=='string'||!xml.includes('<score-partwise'))throw new Error('Generator did not return a MusicXML score')}catch(e){status.textContent='Unable to generate MusicXML: '+e.message;output.innerHTML='';pages.hidden=true;return}
   if(mode==='source'){
    status.textContent='Generated MusicXML source · '+new Blob([xml]).size+' bytes';
    output.innerHTML='<pre class="xml-viewer-source"><code>'+escapeHtml(xml)+'</code></pre>';
