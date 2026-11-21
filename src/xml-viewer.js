@@ -2,11 +2,23 @@
 let toolkitPromise;
 let viewerOpen=false,viewerMode='score';
 const timeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out after '+Math.round(ms/1000)+' seconds')),ms))]);
-const getToolkit=async()=>{
- if(!toolkitPromise)toolkitPromise=import('https://www.verovio.org/javascript/latest/verovio-toolkit-wasm.js').then(async mod=>{
-  const api=mod.default||mod;
-  if(typeof api.module==='function')await api.module();
-  return api;
+const getToolkit=()=>{
+ if(!toolkitPromise)toolkitPromise=new Promise((resolve,reject)=>{
+  const ready=()=>{
+   const api=window.verovio;
+   if(!api?.toolkit||!api?.module){reject(new Error('Verovio browser library did not initialize'));return}
+   const mod=api.module;
+   if(mod.calledRun||mod.runtimeInitialized||mod._vrvToolkit_constructor){resolve(api);return}
+   const previous=mod.onRuntimeInitialized;
+   mod.onRuntimeInitialized=()=>{if(typeof previous==='function')previous();resolve(api)};
+  };
+  if(window.verovio?.module){ready();return}
+  const script=document.createElement('script');
+  script.src='https://www.verovio.org/javascript/latest/verovio-toolkit-wasm.js';
+  script.async=true;
+  script.onload=ready;
+  script.onerror=()=>reject(new Error('Unable to download Verovio from verovio.org'));
+  document.head.appendChild(script);
  }).catch(err=>{toolkitPromise=null;throw err});
  return toolkitPromise;
 };
