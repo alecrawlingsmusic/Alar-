@@ -86,3 +86,9 @@ input,select,textarea{background:#17130f!important;border:1px solid #776044!impo
 .footer{max-width:1510px;color:#8e795c;text-align:center;padding-bottom:28px}
 @media(max-width:750px){header{min-height:67px;padding:9px 14px}header h1{font-size:29px}.rune{font-size:34px}.tag{display:none}.library-hero{height:162px;background-position:center 45%}.library-title{font-size:39px}.library-eyebrow{font-size:8px;letter-spacing:.18em}.library-hero p{font-size:12px}.layout{padding:10px;gap:10px;grid-template-columns:1fr}.nav{display:flex;flex-direction:row;overflow-x:auto;padding:9px;gap:8px;scrollbar-width:thin}.nav:before{display:none}.nav button{min-width:108px;width:108px;min-height:88px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;padding:8px 5px;font-size:12px;text-align:center;white-space:normal}.nav button img{width:37px!important;height:37px!important}.workspace{padding:15px;min-height:65vh}.workspace h2{font-size:27px}.nt-detail{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))!important}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+
+
+/* Timeline block palettes and readable time ranges */
+:root{--block-default:#665038;--block-gold:#9b6b29;--block-emerald:#25684c;--block-blue:#305b82;--block-plum:#75477b;--block-rose:#9c5060;--block-copper:#a05a34;--block-slate:#53616d}
+.block[data-select]{background:linear-gradient(155deg,var(--block-accent,var(--block-default)),color-mix(in srgb,var(--block-accent,var(--block-default)) 55%,#100c0b))!important;border-color:color-mix(in srgb,var(--block-accent,var(--block-default)) 55%,#e4bd7b)!important;display:flex;flex-direction:column;justify-content:center;gap:4px;color:#fff4dd;text-shadow:0 1px 2px #0008}
+.block-time{display:block;color:#fff1d3;font-size:10px;white-space:nowrap;opacity:.9}
