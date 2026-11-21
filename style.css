@@ -119,3 +119,21 @@ input,select,textarea{background:#17130f!important;border:1px solid #776044!impo
 .add-menu-choice small{display:block;font-size:11px;line-height:1.4;color:#bfa98a;margin-top:5px}
 .add-menu-icon{width:35px;flex-shrink:0;text-align:center;font-size:25px;color:#e3b975}
 @media(max-width:520px){.add-menu-panel{padding:15px;max-height:90dvh}.add-menu-grid{grid-template-columns:1fr;gap:8px}.add-menu-choice{min-height:65px;padding:10px}}
+
+
+/* Newt's embedded MusicXML manuscript viewer */
+.xml-viewer{margin:20px 0;border:1px solid #a57a45;border-radius:12px;background:linear-gradient(160deg,#2b1d14,#110e0b);padding:12px;box-shadow:inset 0 0 0 2px #100c09}
+.xml-viewer-toggle{width:100%;text-align:left;font:19px Georgia,serif;padding:13px 15px;background:#3b291a;color:#f1d29a;border-color:#b58a51}
+.xml-viewer-content{padding:10px 2px 2px}
+.xml-viewer-content[hidden],.xml-viewer-pages[hidden]{display:none!important}
+.xml-viewer-bar,.xml-viewer-tabs,.xml-viewer-pages{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.xml-viewer-bar{justify-content:space-between;margin:8px 0 12px}
+.xml-viewer-tabs button{font-size:13px}
+.xml-viewer-status{font-size:12px;color:#cdb28b;min-height:18px}
+.xml-viewer-output{max-height:70dvh;overflow:auto;border:1px solid #705439;border-radius:8px;background:#e9e3d5;overscroll-behavior:contain}
+.xml-viewer-sheet{min-width:500px;padding:12px;background:#fff;color:#111}
+.xml-viewer-sheet svg{display:block;width:100%;height:auto}
+.xml-viewer-source{margin:0;padding:16px;white-space:pre;overflow:auto;color:#ead8b8;background:#15120f;font:12px/1.5 ui-monospace,SFMono-Regular,monospace}
+.xml-viewer-pages{justify-content:center;margin:12px 0}
+.xml-viewer-count{font-size:12px;color:#dbc396}
+@media(max-width:600px){.xml-viewer{padding:8px}.xml-viewer-sheet{min-width:500px}.xml-viewer-tabs button{padding:8px}}
