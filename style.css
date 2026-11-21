@@ -149,3 +149,20 @@ input,select,textarea{background:#17130f!important;border:1px solid #776044!impo
 .nt-chord-buttons{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:22px}
 .nt-chord-buttons button{min-height:46px}
 @media(max-width:600px){.nt-chord-dialog{padding:17px}.nt-chordtap{min-height:48px}}
+
+
+/* Newt touch controller v1 */
+.newt-game{position:fixed;inset:0;z-index:3500;background:#101b18;color:#eed8a6;padding:max(env(safe-area-inset-top),8px) max(env(safe-area-inset-right),10px) max(env(safe-area-inset-bottom),8px) max(env(safe-area-inset-left),10px);box-sizing:border-box;overflow:auto;font-family:system-ui,sans-serif}
+.newt-game button,.newt-game select{color:#f3d69e;background:#2b2b23;border:1px solid #9d7a43;border-radius:9px;min-height:40px;touch-action:manipulation}
+.ng-top{display:flex;align-items:center;gap:10px;justify-content:space-between;min-height:44px}.ng-top strong{color:#dfb879}.ng-top small{font-size:10px}.ng-top select{max-width:145px}.ng-top span{font-size:12px}
+.ng-body{display:grid;grid-template-columns:minmax(75px,13%) minmax(0,1fr) minmax(94px,17%);gap:9px;height:calc(100% - 55px);min-height:250px}
+.ng-left,.ng-right{display:flex;flex-direction:column;justify-content:center;gap:7px}.ng-left button,.ng-right button{font-size:12px}
+.ng-pad{display:flex;flex-direction:column;align-items:center;gap:2px}.ng-pad>div{display:flex;gap:3px}.ng-pad button{width:40px;min-height:40px}
+.ng-work{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid #735c39;border-radius:11px;background:#141a19}
+.ng-tabs{display:flex;gap:4px;padding:5px;flex-shrink:0}.ng-tabs button{flex:1;min-height:32px;font-size:11px}.ng-tabs .active{background:#8c6938;color:#fff}
+.ng-score{background:#f0e6d3;min-height:88px;flex:0 0 33%;overflow:hidden}.ng-score svg{width:100%;height:100%}
+.ng-roll{overflow:auto;flex:1;min-height:90px;touch-action:pan-x pan-y}.ng-pitch-row{display:flex;height:22px;border-bottom:1px solid #3e4044}.ng-pitch-row>span{width:35px;flex-shrink:0;font-size:10px;color:#c9bda6;text-align:center}.ng-pitch-track{position:relative;flex:1;background:repeating-linear-gradient(90deg,#22242e 0%,#22242e calc(6.25% - 1px),#5c5260 6.25%);min-width:0}.ng-note{position:absolute;top:2px;bottom:2px;min-height:0!important;border-radius:3px!important;background:#ad90d5!important;border:1px solid #ddc8ff!important;padding:0!important}.ng-note.active{background:#f0b96a!important}
+.ng-status{padding:4px 9px;font-size:11px;color:#d4b882;flex-shrink:0}
+.ng-abxy{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.ng-abxy button{min-height:52px;font-size:16px}.ng-abxy small{display:block;font-size:9px}
+@media(orientation:portrait){.newt-game:before{content:'Rotate your phone to landscape for the controller';display:block;text-align:center;padding:8px;font-size:13px;color:#e5b97d}.ng-body{height:65dvh}}
+@media(orientation:landscape) and (max-height:460px){.newt-game{padding-top:3px;padding-bottom:3px}.ng-top{min-height:35px}.ng-body{height:calc(100% - 40px)}.ng-score{min-height:66px}.ng-abxy button{min-height:38px}.ng-pad button{min-height:32px;width:36px}.ng-left button,.ng-right button{min-height:30px}}
