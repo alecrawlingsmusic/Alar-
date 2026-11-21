@@ -1,3 +1,4 @@
+import {renderStructuralScore} from './structural-score.js';
 // Live MusicXML preview for Newt. The XML is generated from the current draft.
 let toolkitPromise;
 let viewerOpen=false,viewerMode='score';
@@ -27,7 +28,7 @@ export function mountXmlViewer(root,getXml){
  let open=viewerOpen,mode=viewerMode,page=1,tk=null,lastXml='',revision=0;
  const panel=document.createElement('section');
  panel.className='xml-viewer';
- panel.innerHTML='<button type="button" class="xml-viewer-toggle" aria-expanded="false">♬ Preview MusicXML score</button><div class="xml-viewer-content" hidden><div class="xml-viewer-bar"><div class="xml-viewer-tabs"><button type="button" data-xml-mode="score" class="active">Engraved score</button><button type="button" data-xml-mode="source">MusicXML source</button></div><button type="button" data-xml-refresh>↻ Refresh</button></div><p class="xml-viewer-status" role="status"></p><div class="xml-viewer-output"></div><div class="xml-viewer-pages"><button type="button" data-xml-prev>← Previous</button><span class="xml-viewer-count"></span><button type="button" data-xml-next>Next →</button></div><p class="note">Preview shows the current exported MusicXML. Newt currently exports a structural score with rests, rehearsal marks and basic chord symbols; lyric and vocal-rhythm engraving is not yet implemented.</p></div>';
+ panel.innerHTML='<button type="button" class="xml-viewer-toggle" aria-expanded="false">♬ Preview MusicXML score</button><div class="xml-viewer-content" hidden><div class="xml-viewer-bar"><div class="xml-viewer-tabs"><button type="button" data-xml-mode="score" class="active">Score preview</button><button type="button" data-xml-mode="source">MusicXML source</button></div><button type="button" data-xml-refresh>↻ Refresh</button></div><p class="xml-viewer-status" role="status"></p><div class="xml-viewer-output"></div><div class="xml-viewer-pages"><button type="button" data-xml-prev>← Previous</button><span class="xml-viewer-count"></span><button type="button" data-xml-next>Next →</button></div><p class="note">Score preview is a simplified structural rendering, not full Verovio engraving. It shows the current exported MusicXML. Newt currently exports a structural score with rests, rehearsal marks and basic chord symbols; lyric and vocal-rhythm engraving is not yet implemented.</p></div>';
  root.appendChild(panel);
  panel.querySelector('.xml-viewer-content').hidden=!open;
  panel.querySelector('.xml-viewer-toggle').setAttribute('aria-expanded',String(open));
@@ -44,22 +45,17 @@ export function mountXmlViewer(root,getXml){
    pages.hidden=true;return;
   }
   pages.hidden=true;
-  status.textContent='Loading score renderer…';output.innerHTML='';
-   try{
-   const api=await timeout(getToolkit(),25000,'Verovio loading');if(version!==revision)return;
-   if(!tk)tk=new api.toolkit();
-   if(xml!==lastXml){tk.setOptions({scale:38,pageWidth:1250,adjustPageHeight:true,breaks:'auto'});tk.loadData(xml);lastXml=xml;page=1}
-   status.textContent='Engraving score…';
-   const count=Math.max(1,tk.getPageCount());page=Math.min(page,count);
-   const svg=tk.renderToSVG(page,{});
+  try{
+   const svg=renderStructuralScore(xml);
    if(version!==revision)return;
-   if(!svg||!svg.includes('<svg'))throw new Error('Renderer returned no notation');
    output.innerHTML='<div class="xml-viewer-sheet">'+svg+'</div>';
-   pages.hidden=false;
-   status.textContent='Rendered from the current arrangement';
-   $('.xml-viewer-count').textContent='Page '+page+' of '+count;
-   $('[data-xml-prev]').disabled=page<=1;$('[data-xml-next]').disabled=page>=count;
-  }catch(e){if(version===revision){status.textContent='Engraving unavailable: '+e.message+'. Showing MusicXML source instead.';mode='source';viewerMode='source';panel.querySelectorAll('[data-xml-mode]').forEach(x=>x.classList.toggle('active',x.dataset.xmlMode==='source'));output.innerHTML='<pre class="xml-viewer-source"><code>'+escapeHtml(xml)+'</code></pre>';pages.hidden=true}}
+   status.textContent='Instant structural score preview · measures, chord symbols and rests';
+  }catch(e){
+   status.textContent='Score preview unavailable: '+e.message+'. Showing MusicXML source.';
+   mode='source';viewerMode='source';
+   panel.querySelectorAll('[data-xml-mode]').forEach(x=>x.classList.toggle('active',x.dataset.xmlMode==='source'));
+   output.innerHTML='<pre class="xml-viewer-source"><code>'+escapeHtml(xml)+'</code></pre>';
+  }
  }
  $('.xml-viewer-toggle').onclick=()=>{open=!open;viewerOpen=open;$('.xml-viewer-content').hidden=!open;$('.xml-viewer-toggle').setAttribute('aria-expanded',String(open));if(open)update()};
  panel.querySelectorAll('[data-xml-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.xmlMode;viewerMode=mode;panel.querySelectorAll('[data-xml-mode]').forEach(x=>x.classList.toggle('active',x===b));update()});
