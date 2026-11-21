@@ -46,7 +46,7 @@ export function mountXmlViewer(root,getXml){
   pages.hidden=true;
   status.textContent='Loading score renderer…';output.innerHTML='';
    try{
-   const api=await timeout(getToolkit(),9000,'Verovio loading');if(version!==revision)return;
+   const api=await timeout(getToolkit(),25000,'Verovio loading');if(version!==revision)return;
    if(!tk)tk=new api.toolkit();
    if(xml!==lastXml){tk.setOptions({scale:38,pageWidth:1250,adjustPageHeight:true,breaks:'auto'});tk.loadData(xml);lastXml=xml;page=1}
    status.textContent='Engraving score…';
