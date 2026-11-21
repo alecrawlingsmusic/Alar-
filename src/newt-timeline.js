@@ -20,7 +20,7 @@ export function mountTimeline(root,draft,store,exportXml,exportJson,previewXml){
   let start=0;
   const overview=sec.map((s,i)=>{const left=start*overviewScale;start+=s.bars;return '<button class="nt-region '+(i===focus?'selected':'')+'" data-section="'+i+'" style="left:'+left+'px;width:'+Math.max(32,s.bars*overviewScale-3)+'px"><b>'+esc(s.type)+'</b><small>'+s.bars+' bars</small></button>'}).join('');
   const rulers=Array.from({length:active.bars},(_,b)=>'<div class="nt-measure" style="width:'+barWidth+'px">'+Array.from({length:beats},(_,j)=>'<span style="width:'+unit+'px">'+(b+1)+'.'+(j+1)+'</span>').join('')+'</div>').join('');
-  const chords=active.chordBars.map((bar,b)=>Array.from({length:beats},(_,j)=>{const beat=j+1,first=bar.find(x=>x.beat===beat),half=bar.find(x=>x.beat===beat+.5),split=!!half;const cell=(c,pos)=>'<input data-chord="'+b+':'+pos+'" value="'+esc(c?.symbol||'')+'" aria-label="Bar '+(b+1)+' beat '+pos+'" placeholder="·">';return '<div class="nt-beat" style="width:'+unit+'px"><div class="nt-chordcells">'+cell(first,beat)+(split?cell(half,beat+.5):'')+'</div>'+(zoom>=2?'<button class="nt-split" data-split="'+b+':'+beat+'">'+(split?'−':'½+')+'</button>':'')+'</div>'}).join('')).join('');
+  const chords=active.chordBars.map((bar,b)=>Array.from({length:beats},(_,j)=>{const beat=j+1,first=bar.find(x=>x.beat===beat),half=bar.find(x=>x.beat===beat+.5),split=!!half;const cell=(c,pos)=>'<button type="button" class="nt-chordtap" data-chord-tap="'+b+':'+pos+'" aria-label="Edit chord, bar '+(b+1)+' beat '+pos+'">'+esc(c?.symbol||'＋')+'</button>';return '<div class="nt-beat" style="width:'+unit+'px"><div class="nt-chordcells">'+cell(first,beat)+(split?cell(half,beat+.5):'')+'</div>'+(zoom>=2?'<button class="nt-split" data-split="'+b+':'+beat+'">'+(split?'−':'½+')+'</button>':'')+'</div>'}).join('')).join('');
   const rhythm=active.vocalRhythm.trim().split(/\s+/).filter(Boolean);
   const lyric=active.lyrics.trim().split(/\s+/).filter(Boolean);
   const parts=draft.parts.map(p=>'<div class="nt-part"><span>'+esc(p)+'</span><select data-part="'+esc(p)+'">'+['playing','tacet','cue'].map(v=>'<option value="'+v+'" '+(active.band[p]===v?'selected':'')+'>'+v+'</option>').join('')+'</select></div>').join('');
@@ -41,6 +41,24 @@ export function mountTimeline(root,draft,store,exportXml,exportJson,previewXml){
   field('nt-type',v=>active.type=v);field('nt-bars',v=>{active.bars=clamp(+v||4,1,128);normalizeLayers(active,draft.parts,Number(draft.beats)||4)});
   for(const [id,key] of [['nt-lyrics','lyrics'],['nt-rhythm','vocalRhythm'],['nt-notes','notes']])root.querySelector('#'+id).oninput=ev=>{active[key]=ev.target.value;store()};
   root.querySelectorAll('[data-part]').forEach(el=>el.onchange=()=>{active.band[el.dataset.part]=el.value;store();draw()});
+  root.querySelectorAll('[data-chord-tap]').forEach(el=>el.onclick=()=>{
+   const [b,beat]=el.dataset.chordTap.split(':').map(Number);
+   const bar=active.chordBars[b];let chord=bar.find(x=>x.beat===beat);
+   if(!chord){chord={beat,duration:beat%1?.5:1,symbol:''};bar.push(chord);bar.sort((a,z)=>a.beat-z.beat)}
+   const existing=root.querySelector('.nt-chord-modal');if(existing)existing.remove();
+   const overlay=document.createElement('div');overlay.className='nt-chord-modal';
+   overlay.innerHTML='<div class="nt-chord-dialog" role="dialog" aria-modal="true" aria-label="Edit chord"><h3>Bar '+(b+1)+' · Beat '+beat+'</h3><label>Chord symbol<input class="nt-chord-entry" type="text" autocomplete="off" autocapitalize="characters" placeholder="e.g. Em7, F#7, Bbmaj7"></label><div class="nt-chord-presets"></div><div class="nt-chord-buttons"><button type="button" data-chord-clear>Clear</button><button type="button" data-chord-cancel>Cancel</button><button type="button" class="primary" data-chord-save>Save chord</button></div></div>';
+   root.appendChild(overlay);
+   const input=overlay.querySelector('.nt-chord-entry');input.value=chord.symbol||'';
+   const close=()=>overlay.remove();
+   overlay.addEventListener('click',ev=>{if(ev.target===overlay)close()});
+   overlay.querySelector('[data-chord-cancel]').onclick=close;
+   overlay.querySelector('[data-chord-clear]').onclick=()=>{input.value='';input.focus()};
+   const saveChord=()=>{chord.symbol=input.value.trim();store();close();draw()};
+   overlay.querySelector('[data-chord-save]').onclick=saveChord;
+   input.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();saveChord()}if(ev.key==='Escape')close()});
+   input.focus();
+  });
   root.querySelectorAll('[data-chord]').forEach(el=>el.oninput=()=>{const [b,beat]=el.dataset.chord.split(':').map(Number);const bar=active.chordBars[b];let chord=bar.find(x=>x.beat===beat);if(!chord){chord={beat,duration:beat%1?.5:1,symbol:''};bar.push(chord);bar.sort((a,z)=>a.beat-z.beat)}chord.symbol=el.value;store()});
   root.querySelectorAll('[data-split]').forEach(el=>el.onclick=()=>{const [b,beat]=el.dataset.split.split(':').map(Number),bar=active.chordBars[b],half=bar.find(x=>x.beat===beat+.5);if(half){bar.splice(bar.indexOf(half),1)}else{bar.push({beat:beat+.5,duration:.5,symbol:''});bar.sort((a,z)=>a.beat-z.beat)}store();draw()});
   on('nt-xml',exportXml);on('nt-json',exportJson);
