@@ -1,6 +1,7 @@
 // Live MusicXML preview for Newt. The XML is generated from the current draft.
 let toolkitPromise;
 let viewerOpen=false,viewerMode='score';
+const timeout=(promise,ms,label)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out after '+Math.round(ms/1000)+' seconds')),ms))]);
 const getToolkit=async()=>{
  if(!toolkitPromise)toolkitPromise=import('https://www.verovio.org/javascript/latest/verovio-toolkit-wasm.js').then(async mod=>{
   const api=mod.default||mod;
@@ -30,20 +31,23 @@ export function mountXmlViewer(root,getXml){
    output.innerHTML='<pre class="xml-viewer-source"><code>'+escapeHtml(xml)+'</code></pre>';
    pages.hidden=true;return;
   }
-  pages.hidden=false;
-  status.textContent='Engraving score…';output.innerHTML='';
+  pages.hidden=true;
+  status.textContent='Loading score renderer…';output.innerHTML='';
    try{
-   const api=await getToolkit();if(version!==revision)return;
+   const api=await timeout(getToolkit(),9000,'Verovio loading');if(version!==revision)return;
    if(!tk)tk=new api.toolkit();
    if(xml!==lastXml){tk.setOptions({scale:38,pageWidth:1250,adjustPageHeight:true,breaks:'auto'});tk.loadData(xml);lastXml=xml;page=1}
+   status.textContent='Engraving score…';
    const count=Math.max(1,tk.getPageCount());page=Math.min(page,count);
    const svg=tk.renderToSVG(page,{});
    if(version!==revision)return;
+   if(!svg||!svg.includes('<svg'))throw new Error('Renderer returned no notation');
    output.innerHTML='<div class="xml-viewer-sheet">'+svg+'</div>';
+   pages.hidden=false;
    status.textContent='Rendered from the current arrangement';
    $('.xml-viewer-count').textContent='Page '+page+' of '+count;
    $('[data-xml-prev]').disabled=page<=1;$('[data-xml-next]').disabled=page>=count;
-  }catch(e){if(version===revision){status.textContent='Score rendering unavailable: '+e.message+'. XML source remains available.';output.innerHTML='';pages.hidden=true}}
+  }catch(e){if(version===revision){status.textContent='Engraving unavailable: '+e.message+'. Showing MusicXML source instead.';mode='source';viewerMode='source';panel.querySelectorAll('[data-xml-mode]').forEach(x=>x.classList.toggle('active',x.dataset.xmlMode==='source'));output.innerHTML='<pre class="xml-viewer-source"><code>'+escapeHtml(xml)+'</code></pre>';pages.hidden=true}}
  }
  $('.xml-viewer-toggle').onclick=()=>{open=!open;viewerOpen=open;$('.xml-viewer-content').hidden=!open;$('.xml-viewer-toggle').setAttribute('aria-expanded',String(open));if(open)update()};
  panel.querySelectorAll('[data-xml-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.xmlMode;viewerMode=mode;panel.querySelectorAll('[data-xml-mode]').forEach(x=>x.classList.toggle('active',x===b));update()});
