@@ -137,3 +137,15 @@ input,select,textarea{background:#17130f!important;border:1px solid #776044!impo
 .xml-viewer-pages{justify-content:center;margin:12px 0}
 .xml-viewer-count{font-size:12px;color:#dbc396}
 @media(max-width:600px){.xml-viewer{padding:8px}.xml-viewer-sheet{min-width:500px}.xml-viewer-tabs button{padding:8px}}
+
+
+/* Newt mobile chord entry: large tap targets and focused editor */
+.nt-chordtap{display:block;width:100%;min-width:0;min-height:45px;padding:5px 2px!important;border-radius:6px;font-size:clamp(11px,2.8vw,15px)!important;background:#3b2c1d!important;color:#ffe1a4!important;border:1px solid #a17b47!important;touch-action:manipulation}
+.nt-chordtap:active{background:#71502c!important}
+.nt-chord-modal{position:fixed;inset:0;z-index:2000;background:#060403d9;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}
+.nt-chord-dialog{width:min(460px,100%);background:linear-gradient(155deg,#382518,#130e0b);border:1px solid #d5a46a;border-radius:14px;padding:22px;box-shadow:0 15px 65px #000}
+.nt-chord-dialog h3{margin:0 0 18px}
+.nt-chord-entry{font-size:22px!important;min-height:55px!important;margin-top:8px}
+.nt-chord-buttons{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:22px}
+.nt-chord-buttons button{min-height:46px}
+@media(max-width:600px){.nt-chord-dialog{padding:17px}.nt-chordtap{min-height:48px}}
